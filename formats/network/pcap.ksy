@@ -2,12 +2,17 @@ meta:
   id: pcap
   file-extension: pcapdump
   endian: le
+  ks-version: 0.7
+  imports:
+    - /network/ethernet_frame
 seq:
-  - id: header
+  - id: hdr
     type: header
   - id: packets
     type: packet
     repeat: eos
+-includes:
+  - ethernet_frame.ksy
 types:
   header:
     seq:
@@ -41,15 +46,15 @@ types:
       # https://wiki.wireshark.org/Development/LibpcapFileFormat#Packet_Data
       - id: body
         size: incl_len
-        if: '_root.header.network != linktype::ppi and _root.header.network != linktype::ethernet'
+        if: '_root.hdr.network != linktype::ppi and _root.hdr.network != linktype::ethernet'
       - id: ppi_body
         type: packet_ppi
         size: incl_len
-        if: '_root.header.network == linktype::ppi'
+        if: '_root.hdr.network == linktype::ppi'
       - id: ethernet_body
         type: ethernet_frame
         size: incl_len
-        if: '_root.header.network == linktype::ethernet'
+        if: '_root.hdr.network == linktype::ethernet'
   packet_ppi:
     seq:
       # https://www.cacetech.com/documents/PPI_Header_format_1.0.1.pdf - section 3

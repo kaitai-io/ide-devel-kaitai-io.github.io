@@ -1,8 +1,9 @@
 meta:
   id: blender_blend
   endian: le
+  file-extension: blend
 seq:
-  - id: header
+  - id: hdr
     type: header
   - id: blocks
     type: file_block
@@ -40,7 +41,7 @@ types:
         type: u4
         doc: Total length of the data after the header of file block
       - id: mem_addr
-        size: _root.header.psize
+        size: _root.hdr.psize
         doc: Memory address the structure was located when written to disk
       - id: sdna_index
         type: u4

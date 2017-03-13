@@ -3,12 +3,12 @@ meta:
   file-extension: gif
   endian: le
 seq:
-  - id: header
+  - id: hdr
     type: header
   - id: logical_screen_descriptor
-    type: logical_screen_descriptor
+    type: logical_screen_descriptor_struct
   - id: global_color_table
-    type: global_color_table
+    type: color_table
     # https://www.w3.org/Graphics/GIF/spec-gif89a.txt - section 18
     if: logical_screen_descriptor.has_color_table
     size: logical_screen_descriptor.color_table_size * 3
@@ -24,7 +24,7 @@ types:
       - id: version
         size: 3
         encoding: ASCII
-  logical_screen_descriptor:
+  logical_screen_descriptor_struct:
     # https://www.w3.org/Graphics/GIF/spec-gif89a.txt - section 18
     seq:
       - id: screen_width
@@ -42,7 +42,7 @@ types:
         value: '(flags & 0b10000000) != 0'
       color_table_size:
         value: '2 << (flags & 7)'
-  global_color_table:
+  color_table:
     # https://www.w3.org/Graphics/GIF/spec-gif89a.txt - section 19
     seq:
       - id: entries
@@ -79,7 +79,10 @@ types:
         type: u2
       - id: flags
         type: u1
-      # TODO: parse local color table here, if needed
+      - id: local_color_table
+        type: color_table
+        if: has_color_table
+        size: color_table_size * 3
       - id: image_data
         type: image_data
     instances:

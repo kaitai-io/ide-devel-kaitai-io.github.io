@@ -5,6 +5,8 @@ seq:
   - id: segments
     type: segment
     repeat: eos
+-includes:
+ - exif.ksy
 types:
   segment:
     seq:
@@ -12,25 +14,25 @@ types:
         contents: [0xff]
       - id: marker
         type: u1
-        enum: marker
+        enum: marker_enum
       - id: length
         type: u2
-        if: marker != marker::soi and marker != marker::eoi
+        if: marker != marker_enum::soi and marker != marker_enum::eoi
       - id: data
         size: length - 2
-        if: marker != marker::soi and marker != marker::eoi
+        if: marker != marker_enum::soi and marker != marker_enum::eoi
         type:
           switch-on: marker
           cases:
-            'marker::app0': segment_app0
-            'marker::app1': segment_app1
-            'marker::sof0': segment_sof0
-            'marker::sos': segment_sos
+            'marker_enum::app0': segment_app0
+            'marker_enum::app1': segment_app1
+            'marker_enum::sof0': segment_sof0
+            'marker_enum::sos': segment_sos
       - id: image_data
         size-eos: true
-        if: marker == marker::sos
+        if: marker == marker_enum::sos
     enums:
-      marker:
+      marker_enum:
         0x01: tem
         0xc0: sof0 # start of frame 0
         0xc1: sof1 # start of frame 1
@@ -46,9 +48,23 @@ types:
         0xdb: dqt # define quantization table
         0xdc: dnl # define number of lines
         0xdd: dri # define restart interval
+        0xde: dhp # define hierarchical progression
         0xe0: app0
         0xe1: app1
         0xe2: app2
+        0xe3: app3
+        0xe4: app4
+        0xe5: app5
+        0xe6: app6
+        0xe7: app7
+        0xe8: app8
+        0xe9: app9
+        0xea: app10
+        0xeb: app11
+        0xec: app12
+        0xed: app13
+        0xee: app14
+        0xef: app15
         0xfe: com # comment
   segment_app0:
     seq:

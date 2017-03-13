@@ -1,8 +1,10 @@
 # http://www.microsoft.com/whdc/system/platform/firmware/PECOFF.mspx
 meta:
   id: microsoft_pe
+  title: Microsoft PE (Portable Executable) file format
   application: Microsoft Windows
   endian: le
+  ks-version: 0.7
 seq:
   - id: mz1
     type: mz_placeholder
@@ -10,15 +12,20 @@ seq:
     size: mz1.header_size - 0x40
   - id: pe_signature
     contents: ["PE", 0, 0]
-  - id: coff_header
+  - id: coff_hdr
     type: coff_header
-  - id: optional_header
+  - id: optional_hdr
     type: optional_header
-    size: coff_header.size_of_optional_header
+    size: coff_hdr.size_of_optional_header
   - id: sections
     repeat: expr
-    repeat-expr: coff_header.number_of_sections
+    repeat-expr: coff_hdr.number_of_sections
     type: section
+enums:
+  pe_format:
+    0x107: rom_image
+    0x10b: pe32
+    0x20b: pe32_plus
 types:
   mz_placeholder:
     seq:
@@ -103,17 +110,12 @@ types:
       - id: base_of_data
         type: u4
         if: format == pe_format::pe32
-    enums:
-      pe_format:
-        0x107: rom_image
-        0x10b: pe32
-        0x20b: pe32_plus
   optional_header_windows:
     seq:
-      - id: image_base
+      - id: image_base_32
         type: u4
         if: _parent.std.format == pe_format::pe32
-      - id: image_base
+      - id: image_base_64
         type: u8
         if: _parent.std.format == pe_format::pe32_plus
       - id: section_alignment
@@ -142,31 +144,31 @@ types:
         type: u4
       - id: subsystem
         type: u2
-        enum: subsystem
+        enum: subsystem_enum
       - id: dll_characteristics
         type: u2
-      - id: size_of_stack_reserve
+      - id: size_of_stack_reserve_32
         type: u4
         if: _parent.std.format == pe_format::pe32
-      - id: size_of_stack_reserve
+      - id: size_of_stack_reserve_64
         type: u8
         if: _parent.std.format == pe_format::pe32_plus
-      - id: size_of_stack_commit
+      - id: size_of_stack_commit_32
         type: u4
         if: _parent.std.format == pe_format::pe32
-      - id: size_of_stack_commit
+      - id: size_of_stack_commit_64
         type: u8
         if: _parent.std.format == pe_format::pe32_plus
-      - id: size_of_heap_reserve
+      - id: size_of_heap_reserve_32
         type: u4
         if: _parent.std.format == pe_format::pe32
-      - id: size_of_heap_reserve
+      - id: size_of_heap_reserve_64
         type: u8
         if: _parent.std.format == pe_format::pe32_plus
-      - id: size_of_heap_commit
+      - id: size_of_heap_commit_32
         type: u4
         if: _parent.std.format == pe_format::pe32
-      - id: size_of_heap_commit
+      - id: size_of_heap_commit_64
         type: u8
         if: _parent.std.format == pe_format::pe32_plus
       - id: loader_flags
@@ -174,7 +176,7 @@ types:
       - id: number_of_rva_and_sizes
         type: u4
     enums:
-      subsystem:
+      subsystem_enum:
         0: unknown
         1: native
         2: windows_gui
@@ -230,6 +232,7 @@ types:
         type: str
         encoding: UTF-8
         size: 8
+        pad-right: 0
       - id: virtual_size
         type: u4
       - id: virtual_address
