@@ -106,4 +106,3 @@ application.setInterface({
         cb(exported, parseError);
     }
 });
-//# sourceMappingURL=kaitaiJail.js.map
