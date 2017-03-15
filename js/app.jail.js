@@ -1,6 +1,8 @@
-var jail, TextDecoder;
-var jailReady, inputReady;
-function jailrun(code, args, cb = null) {
+import { baseUrl } from "./app";
+import * as jailed from "jailed";
+var TextDecoder;
+export var jail, jailReady, inputReady;
+export function jailrun(code, args, cb = null) {
     return jailReady.then(() => {
         jail.remote.run(code, args, result => {
             if (cb)

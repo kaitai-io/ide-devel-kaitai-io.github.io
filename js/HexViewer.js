@@ -46,7 +46,7 @@ class HexViewUtils {
         return hexRow;
     }
 }
-class HexViewer {
+export class HexViewer {
     constructor(containerId, dataProvider) {
         this.dataProvider = dataProvider;
         this.rowHeight = 21;

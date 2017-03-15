@@ -1,3 +1,6 @@
+import { ui, addEditorTab } from 'app.layout';
+import { compile, addNewFiles, loadFsItem } from "./app";
+import * as localforage from "localforage";
 var fsHelper = {
     selectNode(root, fn) {
         var currNode = root;
@@ -64,9 +67,9 @@ class StaticFs {
 var kaitaiRoot = { fsType: 'kaitai' };
 kaitaiFsFiles.forEach(fn => fsHelper.selectNode(kaitaiRoot, fn));
 var kaitaiFs = new KaitaiFs(kaitaiRoot);
-var staticFs = new StaticFs();
-var localFs = new LocalStorageFs("fs");
-var fss = { local: localFs, kaitai: kaitaiFs, static: staticFs };
+export var staticFs = new StaticFs();
+export var localFs = new LocalStorageFs("fs");
+export var fss = { local: localFs, kaitai: kaitaiFs, static: staticFs };
 function genChildNode(obj, fn) {
     var isFolder = obj.type === 'folder';
     return {
@@ -79,7 +82,7 @@ function genChildNode(obj, fn) {
 function genChildNodes(obj) {
     return Object.keys(obj.children).map(k => genChildNode(obj.children[k], k));
 }
-function refreshFsNodes() {
+export function refreshFsNodes() {
     var localStorageNode = ui.fileTree.get_node('localStorage');
     localFs.getRootNode().then(root => {
         ui.fileTree.delete_node(localStorageNode.children);
@@ -87,7 +90,7 @@ function refreshFsNodes() {
             genChildNodes(root).forEach(node => ui.fileTree.create_node(localStorageNode, node));
     });
 }
-function addKsyFile(parent, name, fsItem) {
+export function addKsyFile(parent, name, fsItem) {
     ui.fileTree.create_node(ui.fileTree.get_node(parent), { text: name, data: fsItem, icon: 'glyphicon glyphicon-list-alt' }, "last", node => ui.fileTree.activate_node(node, null));
 }
 var fileTreeCont;

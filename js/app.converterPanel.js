@@ -1,4 +1,4 @@
-function refreshConverterPanel(panel, dataProvider, offset) {
+export function refreshConverterPanel(panel, dataProvider, offset) {
     if (dataProvider && offset != -1) {
         var data = dataProvider.get(offset, Math.min(dataProvider.length - offset, 64)).slice(0);
         function numConv(len, signed, bigEndian) {

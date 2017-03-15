@@ -1,8 +1,17 @@
 /// <reference path="../lib/ts-types/goldenlayout.d.ts" />
 // /// <reference path="../node_modules/typescript/lib/lib.es6.d.ts" />
-var baseUrl = location.href.split('?')[0].split('/').slice(0, -1).join('/') + '/';
+import { ui, addEditorTab, isPracticeMode, practiceChallName, practiceChall } from "./app.layout";
+import { showError, handleError } from "./app.errors";
+import { fss, addKsyFile, staticFs, refreshFsNodes, localFs } from "./app.files";
+import { refreshSelectionInput } from "./app.selectionInput";
+import { parsedToTree } from "./parsedToTree";
+import { jailrun, jailReady, inputReady, jail } from "./app.jail";
+import { refreshConverterPanel } from "./app.converterPanel";
+import * as localforage from "localforage";
+import { initFileDrop } from "./FileDrop";
+export var baseUrl = location.href.split('?')[0].split('/').slice(0, -1).join('/') + '/';
 $.jstree.defaults.core.force_text = true;
-class IntervalViewer {
+export class IntervalViewer {
     constructor(htmlIdPrefix) {
         this.htmlIdPrefix = htmlIdPrefix;
         ["Curr", "Total", "Prev", "Next"].forEach(control => this[`html${control}`] = $(`#${htmlIdPrefix}${control}`));
@@ -24,10 +33,10 @@ class IntervalViewer {
         this.htmlTotal.text(this.intervals.length);
     }
 }
-var dataProvider;
-var itree;
+export var dataProvider;
+export var itree;
 var ksySchema;
-var ksyTypes;
+export var ksyTypes;
 ;
 class JsImporter {
     importYaml(name, mode) {
@@ -41,7 +50,7 @@ class JsImporter {
     }
 }
 var jsImporter = new JsImporter();
-function compile(srcYaml, kslang, debug) {
+export function compile(srcYaml, kslang, debug) {
     var compilerSchema;
     try {
         kaitaiIde.ksySchema = ksySchema = YAML.parse(srcYaml);
@@ -161,13 +170,13 @@ function reparse() {
                     selectedInTree = false;
                 }
             });
-            if (isPracticeMode)
-                practiceExportedChanged(exportedRoot);
+            //if (isPracticeMode)
+            //    practiceExportedChanged(exportedRoot);
         }, isPracticeMode || $("#disableLazyParsing").is(':checked'));
     });
 }
 var lastKsyContent, inputContent, inputFsItem, lastKsyFsItem;
-function loadFsItem(fsItem, refreshGui = true) {
+export function loadFsItem(fsItem, refreshGui = true) {
     if (!fsItem || fsItem.type !== 'file')
         return Promise.resolve();
     return fss[fsItem.fsType].get(fsItem.fn).then(content => {
@@ -192,7 +201,7 @@ function loadFsItem(fsItem, refreshGui = true) {
         }
     });
 }
-function addNewFiles(files) {
+export function addNewFiles(files) {
     return Promise.all(files.map(file => {
         return (isKsyFile(file.file.name) ? file.read('text') : file.read('arrayBuffer')).then(content => {
             return localFs.put(file.file.name, content).then(fsItem => {
@@ -202,8 +211,8 @@ function addNewFiles(files) {
     })).then(refreshFsNodes);
 }
 localStorage.setItem('lastVersion', kaitaiIde.version);
-if (isPracticeMode)
-    $.getScript('js/app.practiceMode.js');
+//if (isPracticeMode)
+//    $.getScript('js/app.practiceMode.js');
 $(() => {
     $('#webIdeVersion').text(kaitaiIde.version);
     $('#compilerVersion').text(io.kaitai.struct.MainJs().version + " (" + io.kaitai.struct.MainJs().buildDate + ")");

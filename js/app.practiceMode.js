@@ -1,5 +1,6 @@
+import { ui, practiceChall, practiceChallName } from "app.layout";
 var practiceDiff, aceRange, markers = [];
-function practiceExportedChanged(exportedRoot) {
+export function practiceExportedChanged(exportedRoot) {
     function numConv(num) {
         return num % 1 > 10e-9 ? Math.round(num * 1000000) / 1000000 : num;
     }

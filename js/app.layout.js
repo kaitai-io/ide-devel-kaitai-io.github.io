@@ -1,7 +1,10 @@
+import * as GoldenLayout from "goldenlayout";
+import { HexViewer } from "HexViewer";
 var practiceChallNameMatch = /practice=([a-z0-9]+)/.exec(location.href);
-var practiceChallName = practiceChallNameMatch ? practiceChallNameMatch[1] : practiceMode.chall;
-var practiceChall = practiceMode && practiceChallName && practiceMode.challs[practiceChallName];
-var isPracticeMode = !!practiceChall;
+export var practiceMode = null;
+export var practiceChallName = practiceChallNameMatch ? practiceChallNameMatch[1] : practiceMode && practiceMode.chall;
+export var practiceChall = practiceMode && practiceChallName && practiceMode.challs[practiceChallName];
+export var isPracticeMode = !!practiceChall;
 var myLayout = new GoldenLayout({
     settings: { showCloseIcon: false, showPopoutIcon: false },
     content: [
@@ -34,11 +37,11 @@ var myLayout = new GoldenLayout({
         }
     ]
 });
-function getLayoutNodeById(id) {
+export function getLayoutNodeById(id) {
     return myLayout._getAllContentItems().filter(x => x.config.id === id)[0];
 }
 var dynCompId = 1;
-function addEditorTab(title, data, lang = null, parent = 'codeTab') {
+export function addEditorTab(title, data, lang = null, parent = 'codeTab') {
     var componentName = `dynComp${dynCompId++}`;
     addEditor(componentName, lang, true, editor => editor.setValue(data, -1));
     getLayoutNodeById(parent).addChild({ type: 'component', componentName, title });
@@ -107,4 +110,5 @@ addExistingDiv('infoPanel');
 addExistingDiv('converterPanel');
 addExistingDiv('practicePanel');
 myLayout.init();
+export { ui };
 //# sourceMappingURL=app.layout.js.map
