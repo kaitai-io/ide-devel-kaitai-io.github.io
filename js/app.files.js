@@ -193,9 +193,10 @@ define(["require", "exports", "app.layout", "./app", "localforage"], function (r
             //console.log(fsItem, linkData);
             exports.fss[fsItem.fsType].get(fsItem.fn).then(content => {
                 return app_1.compile(content, linkData.kslang, !!linkData.ksdebug).then(compiled => {
-                    compiled.forEach((compItem, i) => {
-                        var title = fsItem.fn.split('/').last() + ' [' + $(e.target).text() + ']' + (compiled.length == 1 ? '' : ` ${i + 1}/${compiled.length}`);
-                        app_layout_1.addEditorTab(title, compItem, linkData.acelang);
+                    Object.keys(compiled).forEach(fileName => {
+                        //var title = fsItem.fn.split('/').last() + ' [' + $(e.target).text() + ']' + (compiled.length == 1 ? '' : ` ${i + 1}/${compiled.length}`);
+                        //addEditorTab(title, compItem, linkData.acelang);
+                        app_layout_1.addEditorTab(fileName, compiled[fileName], linkData.acelang);
                     });
                 });
             });
